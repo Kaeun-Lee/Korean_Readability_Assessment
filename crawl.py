@@ -4,6 +4,7 @@ from tika import parser
 from tqdm import tqdm 
 import pandas as pd
 import warnings 
+import pickle 
 warnings.filterwarnings(action='ignore')
 
 error = 0
@@ -24,3 +25,7 @@ for file_num in tqdm(range(217,1885)):
     except:
         error+=1
         print(f'{error}th occured!')
+        
+with open("Korean Sustainability Report RA Dataset.bin","wb") as fw:
+    pickle.dump(df, fw)
+
