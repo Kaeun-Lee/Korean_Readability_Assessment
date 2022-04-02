@@ -3,8 +3,11 @@ import numpy as np
 from pororo.tasks.sentiment_analysis import PororoSentimentFactory
 from pororo.tasks.tokenization import PororoTokenizationFactory
 
+sa_func = PororoSentimentFactory(task="sentiment", lang="ko", model="brainbert.base.ko.shopping")
+tk_func = PororoTokenizationFactory(task="tokenization", lang="ko", model="bpe32k.ko")
+
 def ra_sentimentAssesment(input_sentence:str, device='cpu'):
-    func = PororoSentimentFactory(task="sentiment", lang="ko", model="brainbert.base.ko.shopping").load(device)
+    func = sa_func.load(device)
     ra_sentimentAssesment = []
 
     for sent in input_sentence.split('.'):  # 문장 단위로 쪼개기
@@ -17,7 +20,7 @@ def ra_sentimentAssesment(input_sentence:str, device='cpu'):
     return ra_sentimentAssesment
 
 def ra_fogIndex(input_sentence:str, n:int, device='cpu'):
-    func = PororoTokenizationFactory(task="tokenization", lang="ko", model="bpe32k.ko").load(device)
+    func = tk_func.load(device)
     input_sentence_length = len(input_sentence.split('.'))  # 문장 수
     input_sentence_tokenzied = func(input_sentence)    # 토큰화
 
