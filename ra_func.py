@@ -43,10 +43,10 @@ def ra_fogIndex(input_sentence:str, n:int, device='cpu'):
         word = re.sub(r'\.', '', word)      # . 제거
         
         if word != '':
-            num_letter += len(word)
             if len(word) == n:
                 long_words += 1
             if len(word) >= 2:
+                num_letter += len(word)
                 total_word += 1
 
     ASL = total_word / input_sentence_length  # 평균 문장 길이
