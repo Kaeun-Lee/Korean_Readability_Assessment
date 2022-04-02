@@ -3,11 +3,20 @@ import numpy as np
 from pororo.tasks.sentiment_analysis import PororoSentimentFactory
 from pororo.tasks.tokenization import PororoTokenizationFactory
 
-sa_func = PororoSentimentFactory(task="sentiment", lang="ko", model="brainbert.base.ko.shopping")
 tk_func = PororoTokenizationFactory(task="tokenization", lang="ko", model="bpe32k.ko")
 
-def ra_sentimentAssesment(input_sentence:str, device='cpu'):
-    func = sa_func.load(device)
+def ra_sentimentAssessment_batch(input_batch:list, device='cpu'):
+    sa_func = PororoSentimentFactory(task="sentiment", lang="ko", model="brainbert.base.ko.shopping").load(device)
+    pbar = tqdm(input_batch)
+    output = []
+    for _ in pbar:
+        score = ra_sentimentAssessment(_, sa_func)
+        output.append(score)
+        pbar.set_description(f"Current Score: {sum(output)/len(output)}")
+    return output
+        
+
+def ra_sentimentAssessment(input_sentence:str, func):
     ra_sentimentAssesment = []
 
     for sent in input_sentence.split('.'):  # 문장 단위로 쪼개기
