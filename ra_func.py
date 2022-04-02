@@ -5,17 +5,7 @@ from pororo.tasks.tokenization import PororoTokenizationFactory
 
 tk_func = PororoTokenizationFactory(task="tokenization", lang="ko", model="bpe32k.ko")
 
-def ra_sentimentAssessment_batch(input_batch:list, device='cpu'):
-    sa_func = PororoSentimentFactory(task="sentiment", lang="ko", model="brainbert.base.ko.shopping").load(device)
-    pbar = tqdm(input_batch)
-    output = []
-    for _ in pbar:
-        score = ra_sentimentAssessment(_, sa_func)
-        output.append(score)
-        pbar.set_description(f"Current Score: {sum(output)/len(output)}")
-    return output
-        
-
+ 
 def ra_sentimentAssessment(input_sentence:str, func):
     ra_sentimentAssesment = []
 
@@ -27,6 +17,16 @@ def ra_sentimentAssessment(input_sentence:str, func):
     
     ra_sentimentAssesment = np.array(ra_sentimentAssesment).std() * (len( ra_sentimentAssesment)**0.5)
     return ra_sentimentAssesment
+
+def ra_sentimentAssessment_batch(input_batch:list, device='cpu'): # ra_sentimentAssessment를 batch 단위로 활용할 때 더욱 빠르게 사용할 수 있게 해줌
+    sa_func = PororoSentimentFactory(task="sentiment", lang="ko", model="brainbert.base.ko.nsmc").load(device)
+    pbar = tqdm(input_batch)
+    output = []
+    for _ in pbar:
+        score = ra_sentimentAssessment(_, sa_func)
+        output.append(score)
+        pbar.set_description(f"Current Score: {sum(output)/len(output)}")
+    return output
 
 def ra_fogIndex(input_sentence:str, n:int, device='cpu'):
     func = tk_func.load(device)
