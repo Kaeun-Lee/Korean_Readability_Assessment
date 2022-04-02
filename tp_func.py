@@ -8,7 +8,7 @@ import pickle
 import math 
 warnings.filterwarnings(action='ignore')
 
-def tp_downloadData()
+def tp_downloadData():
     error = 0
     df = pd.DataFrame()
     for file_num in tqdm(range(217,1885)):
