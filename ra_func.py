@@ -52,3 +52,13 @@ def ra_fogIndex(input_sentence:str, n:int, device='cpu'):
     fog_index = (ASL + (long_words / total_word) * 100) * 0.4
     
     return fog_index
+
+def ra_fodIndex_batch(input_batch:list, n:int, device='cpu'): # ra_fogIndex를 batch 단위로 활용할 때 더욱 빠르게 사용할 수 있게 해줌
+    tk_func = PororoTokenizationFactory(task="tokenization", lang="ko", model="bpe32k.ko").load(device)
+    pbar = tqdm(input_batch)
+    output = []
+    for _ in pbar:
+        score = ra_fogIndex(_, n, tk_func)
+        output.append(score)
+        pbar.set_description(f"Current Score: {sum(output)/len(output)}")
+    return output
