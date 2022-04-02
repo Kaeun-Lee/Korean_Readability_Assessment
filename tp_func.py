@@ -6,6 +6,7 @@ import pandas as pd
 import warnings 
 import pickle 
 import math 
+import re
 warnings.filterwarnings(action='ignore')
 
 def tp_downloadData():
