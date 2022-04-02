@@ -1,5 +1,6 @@
 from tqdm import tqdm
 import numpy as np
+import re
 from pororo.tasks.sentiment_analysis import PororoSentimentFactory
 from pororo.tasks.tokenization import PororoTokenizationFactory
 
