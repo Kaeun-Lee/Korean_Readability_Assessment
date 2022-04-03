@@ -31,26 +31,25 @@ def ra_sentimentAssessment_batch(input_batch:list, device='cpu'): # ra_sentiment
 
 def ra_fogIndex(input_sentence:str, n:int, device='cpu'):
     func = tk_func.load(device)
-    input_sentence_length = len(input_sentence.split('.'))  # 문장 수
+    num_sentences = len(input_sentence.split('.'))  # 문장 수
     input_sentence_tokenzied = func(input_sentence)    # 토큰화
 
-    num_letter = 0  # 글자 수
-    long_words = 0  # n음절 이상인 단어 수
-    total_word = 0  # 단어 수
+    num_letters = 0  # 글자 수
+    num_long_words = 0  # n음절 이상인 단어 수
+    num_words = 0  # 단어 수
 
     for word in input_sentence_tokenzied:   # 단어 수는 빈칸(" ")으로 구분
         word = re.sub(r'▁', '', word)       # _ 제거
         word = re.sub(r'\.', '', word)      # . 제거
         
-        if word != '':
-            if len(word) == n:
-                long_words += 1
-            if len(word) >= 2:
-                num_letter += len(word)
-                total_word += 1
+        if len(word) == n:
+            num_long_words += 1
+        if len(word) >= 2:
+            num_letters += len(word)
+            num_words += 1
 
-    ASL = total_word / input_sentence_length  # 평균 문장 길이
-    fog_index = (ASL + (long_words / total_word) * 100) * 0.4
+    ASL = num_words / num_sentences  # 평균 문장 길이
+    fog_index = (ASL + (num_long_words / num_words) * 100) * 0.4
     
     return fog_index
 
