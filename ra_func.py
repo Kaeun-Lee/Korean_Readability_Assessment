@@ -62,3 +62,30 @@ def ra_fogIndex_batch(input_batch:list, n:int, device='cpu'): # ra_fogIndex를 b
         output.append(score)
         pbar.set_description(f"Current Score: {sum(output)/len(output)}")
     return output
+   
+   
+def ra_biRSRS_batch(input_batch,model,tokenizer,device):
+    model.eval()
+    mask = tokenizer.mask_token_id
+    pad  = tokenizer.pad_token_id
+
+    input_ids = tokenizer.batch_encode_plus(input_batch.split('.'),
+                                            padding=True,
+                                            truncation=True,
+                                            return_tensors='pt')['input_ids'].to(device)
+    batch_val = []                                       
+    for sent in input_ids:
+        sent_len = (sent!=0).sum()
+        sent_ids = sent[:sent_len]
+        val=[]
+        for i in range(1,sent_ids.shape[0]-1):
+            target = sent_ids[i]
+            prompt = torch.clone(sent_ids)
+            prompt[i] = mask
+            o = model(prompt.reshape(-1,1))['logits']
+            o = torch.nn.functional.softmax(o,dim=2)
+            val.append(float(o[i,0,target].cpu().detach().numpy()))
+
+        val = sum([i*_ for i,_ in enumerate(sorted(val))]) / sent_len
+        batch_val.append(val.cpu().numpy())
+    return sum(batch_val)/input_ids.shape[0]
